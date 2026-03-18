@@ -140,8 +140,7 @@ bot.start(async (ctx) => {
   }
 });
 
-bot.launch()
-  .then(() => console.log('🤖 Бот запущен!'))
+bot.launch()\n  .then(() => console.log('🤖 Бот запущен!'))
   .catch(err => console.error('⚠️ Ошибка соединения с Telegram API (бот не запущен, но сервер продолжит работу):', err.message));
 
 // ==========================================
