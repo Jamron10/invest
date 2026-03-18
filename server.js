@@ -25,7 +25,7 @@ app.use(cors());
 app.use(express.json());
 
 const BOT_TOKEN = process.env.BOT_TOKEN || '8743293290:AAFgHpNIJ--FD3H1z-nfiBx7IxbQlEPcx60';
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://narekmxeyan2024_db_user:30w56Iz0PajXNhCl@cluster0.wuftzdl.mongodb.net/?appName=Cluster0';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://narek:1VPfxLH6NKoxI17E@cluster0.wuftzdl.mongodb.net/?appName=Cluster0';
 const WEBAPP_URL = process.env.WEBAPP_URL || 'https://invest-sf5k.onrender.com';
 const PORT = process.env.PORT || 3000;
 
