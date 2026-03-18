@@ -1,32 +1,59 @@
 // Глобальный перехватчик ошибок для отладки
 window.addEventListener('error', (e) => {
   console.error("Global Error:", e.message);
-  // Не показываем алерт на каждую мелкую ошибку, но пишем в лог
 });
 
-// Initialize Telegram WebApp
-let tg = window.Telegram?.WebApp;
-if (!tg) {
-  // Mock for sandbox
-  tg = {
-    expand: () => {},
-    ready: () => {},
-    initDataUnsafe: {
-      user: { id: 123456789, first_name: 'Демо', username: 'investor' }
+function extractTelegramUser() {
+  try {
+    // 100% надежный парсинг из любого места URL
+    const match = window.location.href.match(/[?&#]tgWebAppData=([^&]+)/);
+    if (match) {
+      const rawData = decodeURIComponent(match[1]);
+      const params = new URLSearchParams(rawData);
+      const userStr = params.get('user');
+      if (userStr) {
+        // Пробуем распарсить
+        try {
+          return JSON.parse(userStr);
+        } catch(e) {
+          // Если почему-то было закодировано дважды
+          return JSON.parse(decodeURIComponent(userStr));
+        }
+      }
     }
-  };
-}
-
-try {
-  if (tg && typeof tg.expand === 'function') {
-    tg.expand();
-    tg.ready();
+  } catch(e) {
+    console.error("Manual TG parse error:", e);
   }
-} catch (e) {
-  console.warn("TG Init warning:", e);
+  return null;
 }
 
-const tgUser = tg.initDataUnsafe?.user || { id: 'demo_user', first_name: 'Guest' };
+const parsedUser = extractTelegramUser();
+
+// Создаем безопасную заглушку для SDK
+window.Telegram = window.Telegram || {};
+window.Telegram.WebApp = window.Telegram.WebApp || {
+  ready: () => {},
+  expand: () => {},
+  initDataUnsafe: { user: parsedUser }
+};
+
+const tg = window.Telegram.WebApp;
+
+// Вызываем нативные методы Telegram без SDK, чтобы окно разворачивалось
+function sendTgEvent(eventType, eventData = '') {
+  try {
+    if (window.TelegramWebviewProxy !== undefined) {
+      window.TelegramWebviewProxy.postEvent(eventType, JSON.stringify(eventData));
+    } else if (window.external && 'notify' in window.external) {
+      window.external.notify(JSON.stringify({ eventType, eventData }));
+    } else if (window.parent !== window) {
+      window.parent.postMessage(JSON.stringify({ eventType, eventData }), 'https://web.telegram.org');
+    }
+  } catch(e) {}
+}
+sendTgEvent('web_app_ready');
+sendTgEvent('web_app_expand');
+const tgUser = parsedUser || (tg.initDataUnsafe && tg.initDataUnsafe.user) || { id: 123456789, first_name: 'Демо', username: 'investor' };
 const tgId = tgUser.id;
 const BOT_USERNAME = 'InvestCorTonbot'; // Replace with your bot
 
