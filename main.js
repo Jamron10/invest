@@ -63,7 +63,7 @@ const CONFIG = {
   USE_REAL_API: false, 
   
   // Впишите сюда ссылку на ваш будущий сервер (например: https://api.vash-domain.com)
-  API_URL: 'http://coral-eagle-313381.hostingersite.com/api' 
+  API_URL: 'https://invest-sf5k.onrender.com/api' 
 };
 
 const api = {
