@@ -146,6 +146,9 @@ bot.launch().then(() => console.log('🤖 Бот запущен!'));
 // EXPRESS API (Для связи с MiniApp)
 // ==========================================
 
+require('path');
+app.use(express.static(__dirname));
+
 // Главная страница (чтобы не было ошибки "Cannot GET /")
 app.get('/', (req, res) => {
   res.send('TON Invest Backend API работает! 🚀');
