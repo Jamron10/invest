@@ -146,6 +146,13 @@ bot.launch().then(() => console.log('🤖 Бот запущен!'));
 // EXPRESS API (Для связи с MiniApp)
 // ==========================================
 
+// Главная страница (чтобы не было ошибки "Cannot GET /")
+app.get('/', (req, res) => {
+  res.send('TON Invest Backend API работает! 🚀');
+});
+
+
+
 // Получить глобальные данные (статистика, тарифы, таски)
 app.get('/api/global', async (req, res) => {
   let global = await Global.findOne({ id: 'global' });
